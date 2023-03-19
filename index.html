@@ -20,15 +20,15 @@
       var jsonbutton = document.querySelector("#json-button");
       var fullscreenButton = document.querySelector("#full-screen");
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/ViewGL.data.unityweb",
-        frameworkUrl: "Build/ViewGL.framework.js.unityweb",
-        codeUrl: "Build/ViewGL.wasm.unityweb",
+        dataUrl: "Build/ViewGL.data",
+        frameworkUrl: "Build/ViewGL.framework.js",
+        codeUrl: "Build/ViewGL.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "GRANTedViewer",
         productVersion: "0.1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.  
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       }).then((unityInstance) => {
         //button to pass download URL to DownloadFile Method in unity webgl (attached on GlbImporterManager GameObject) 
         bluebutton.onclick = () => {
