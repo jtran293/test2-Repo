@@ -3,90 +3,56 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>GRANTedViewer</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
+    <title>UofT DIvision of Anatomy | GRANTedViewer</title>
   </head>
-  <body class="light">
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas"></canvas>
+  <body style="text-align: center">
+    <canvas id="unity-canvas" width=960 height=600 style="width: 960px; height: 600px; background: #FFFFFF"></canvas>
+    <div id="unity-footer">
+        <button id="blue-button">Os Coxa</button> 
+        <button id="red-button">Upper Limb</button> 
+        <button id="json-button">JSON</button> 
+        <button id="full-screen">Full Screen</button> 
     </div>
-    <div id="loading-cover" style="display:none;">
-      <div id="unity-loading-bar">
-        <div id="unity-logo"><img src="logo.png"></div>
-        <div id="unity-progress-bar-empty" style="display: none;">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-        <div class="spinner"></div>
-      </div>
-    </div>
-    <div id="unity-fullscreen-button" style="display: none;"></div>
+    <script src="Build/ViewGL.loader.js"></script>
     <script>
-      const hideFullScreenButton = "";
-      const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/ViewGL.loader.js";
-      const config = {
-        dataUrl: buildUrl + "/ViewGL.data.unityweb",
-        frameworkUrl: buildUrl + "/ViewGL.framework.js.unityweb",
-        codeUrl: buildUrl + "/ViewGL.wasm.unityweb",
+      var bluebutton = document.querySelector("#blue-button");
+      var redbutton = document.querySelector("#red-button");
+      var jsonbutton = document.querySelector("#json-button");
+      var fullscreenButton = document.querySelector("#full-screen");
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/ViewGL.data.unityweb",
+        frameworkUrl: "Build/ViewGL.framework.js.unityweb",
+        codeUrl: "Build/ViewGL.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "GRANTedViewer",
         productVersion: "0.1.0",
-      };
-
-      const container = document.querySelector("#unity-container");
-      const canvas = document.querySelector("#unity-canvas");
-      const loadingCover = document.querySelector("#loading-cover");
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-      const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      const spinner = document.querySelector('.spinner');
-
-      const canFullscreen = (function() {
-        for (const key of [
-            'exitFullscreen',
-            'webkitExitFullscreen',
-            'webkitCancelFullScreen',
-            'mozCancelFullScreen',
-            'msExitFullscreen',
-          ]) {
-          if (key in document) {
-            return true;
-          }
-        }
-        return false;
-      }());
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-        config.devicePixelRatio = 1;
-      }
-      loadingCover.style.display = "";
-
-      const script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          spinner.style.display = "none";
-          progressBarEmpty.style.display = "";
-          progressBarFull.style.width = `${100 * progress}%`;
-        }).then((unityInstance) => {
-          loadingCover.style.display = "none";
-          if (canFullscreen) {
-            if (!hideFullScreenButton) {
-              fullscreenButton.style.display = "";
-            }
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-            };
-          }
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.  
+      }).then((unityInstance) => {
+        //button to pass download URL to DownloadFile Method in unity webgl (attached on GlbImporterManager GameObject) 
+        bluebutton.onclick = () => {
+        <!-- unityInstance.SendMessage('JavascriptHook', 'JSButton'); -->//this line is to debugg and see if button works  turns on off image in unity webgl viewer
+        unityInstance.SendMessage('GlbImporterManager', 'DownloadFile', 'https://raw.githubusercontent.com/jtran293/ModelTest/main/LabelTest.glb');
+        };
+        //button to pass download URL to DownloadFile Method in unity webgl (attached on GlbImporterManager GameObject)
+        redbutton.onclick = () => {
+        unityInstance.SendMessage('GlbImporterManager', 'DownloadFile', 'https://raw.githubusercontent.com/jtran293/ModelTest/main/ULTest.glb');
+        //unityInstance.SendMessage('GlbImporterManager', 'DownloadFile', 'https://borealisdata.ca/privateurl.xhtml?token=70773114-d20d-41d4-8f34-6f701c131396/ULTest.glb');
+        };
+        //button to pass JSON Object (string) into Unity WebGL viewer
+        jsonbutton.onclick = () => {
+        var testObject = { name: "JSON Object Works"};
+        var jsonString = JSON.stringify(testObject);
+        unityInstance.SendMessage('JavascriptHook', 'JSButtonText', jsonString);
+        //unityInstance.SendMessage('JavascriptHook', 'JSButton')
+        };
+        //button to fullscreen
+        fullscreenButton.onclick = () => {
+        unityInstance.SetFullscreen(1);
+        };
+      });
     </script>
   </body>
 </html>
+
