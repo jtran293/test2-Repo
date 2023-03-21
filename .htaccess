@@ -1,0 +1,6 @@
+Header set Access-Control-Allow-Origin "*"
+
+<IfModule mod_mime.c>
+addtype application/wasm wasm
+addtype application/javascript javascript
+</IfModule>
